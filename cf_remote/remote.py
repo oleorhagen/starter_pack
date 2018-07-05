@@ -45,6 +45,13 @@ def print_info(data):
     else:
         output["CFEngine"] = "Not installed"
 
+    binaries = []
+    if "bin" in data:
+        for key in data["bin"]:
+            binaries.append(key)
+    if binaries:
+        output["Binaries"] = ", ".join(binaries)
+
     column_print(output)
 
 def info(hosts, users=None):
