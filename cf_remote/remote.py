@@ -39,6 +39,9 @@ def print_info(data):
     else:
         output["OS"] = "Unknown"
 
+    if "arch" in data:
+        output["Architecture"] = data["arch"]
+
     agent_version = data["agent_version"]
     if agent_version:
         output["CFEngine"] = agent_version
@@ -68,7 +71,8 @@ def info(hosts, users=None):
     data["ssh_user"] = user
     data["ssh_host"] = host
     data["whoami"] = ssh_cmd(c, "whoami")
-    data["uname"] = ssh_cmd(c, 'uname')
+    data["uname"] = ssh_cmd(c, "uname")
+    data["arch"] = ssh_cmd(c, "uname -m")
     data["os_release"] = os_release(ssh_cmd(c, "cat /etc/os-release"))
     data["agent_location"] = ssh_cmd(c, "which cf-agent")
     data["agent_version"] = ssh_cmd(c, "cf-agent --version")
