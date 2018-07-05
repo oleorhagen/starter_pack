@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-import logging
 import json
 from collections import OrderedDict
 
@@ -10,19 +9,18 @@ import fabric
 from paramiko.ssh_exception import AuthenticationException
 
 from cf_remote.utils import os_release, column_print, pretty
-
-log = logging.getLogger(__name__)
+from cf_remote import log
 
 def ssh_cmd(c, cmd):
     try:
-        log.debug("'{}'".format(cmd))
+        log.debug("Running over SSH: '{}'".format(cmd))
         result = c.run(cmd, hide=True)
         return result.stdout.strip()
     except invoke.exceptions.UnexpectedExit:
         return None
 
 def print_info(data):
-    log.debug(pretty(data))
+    log.debug("JSON data from host info: \n" + pretty(data))
     output = OrderedDict()
 
     os_release = data["os_release"]

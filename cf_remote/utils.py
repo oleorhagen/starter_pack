@@ -2,6 +2,7 @@ import os
 import sys
 import json
 from collections import OrderedDict
+from cf_remote import log
 
 def user_error(msg):
     sys.exit(msg)
@@ -23,6 +24,7 @@ def read_json(path):
 
 def os_release(inp):
     if not inp:
+        log.debug("Cannot parse os-release file (empty)")
         return None
     d = OrderedDict()
     for line in inp.split("\n"):
