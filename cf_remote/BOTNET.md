@@ -36,3 +36,8 @@ $ cf-remote version
 $ cf-remote --version
 $ cf-remote --help
 ```
+
+More advanced:
+```
+$ cf-remote -H client1,clieant2 --hub hub1 --bootstrap hub1 install
+```
