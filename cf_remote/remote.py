@@ -11,6 +11,7 @@ from paramiko.ssh_exception import AuthenticationException
 from cf_remote.utils import os_release, column_print, pretty
 from cf_remote import log
 
+
 def ssh_cmd(c, cmd):
     try:
         log.debug("Running over SSH: '{}'".format(cmd))
@@ -18,6 +19,7 @@ def ssh_cmd(c, cmd):
         return result.stdout.strip()
     except invoke.exceptions.UnexpectedExit:
         return None
+
 
 def print_info(data):
     log.debug("JSON data from host info: \n" + pretty(data))
@@ -57,10 +59,11 @@ def print_info(data):
 
     column_print(output)
 
+
 def info(hosts, users=None):
     host = hosts[0]
     if not users:
-        users =  ["root", "ubuntu", "vagrant"]
+        users = ["root", "ubuntu", "vagrant"]
     for user in users:
         try:
             c = fabric.Connection(host=host, user=user)
