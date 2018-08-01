@@ -1,3 +1,4 @@
+import os
 import sys
 import argparse
 
@@ -10,6 +11,9 @@ def get_args():
     ap = argparse.ArgumentParser(
         description="Spooky CFEngine at a distance",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    default_dir = os.path.expanduser("~/.cfengine/packages/")
+
     # ALL:
     ap.add_argument(
         "--hosts", "-H", help="What hosts to connect to (ssh)", type=str)
@@ -18,7 +22,7 @@ def get_args():
         "-d",
         help="Local directory for packages",
         type=str,
-        default=package_path() + "/packages")
+        default=default_dir)
     ap.add_argument(
         "--log-level",
         "-l",
