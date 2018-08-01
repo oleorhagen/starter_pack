@@ -6,7 +6,43 @@ from cf_remote import log
 
 
 def user_error(msg):
-    sys.exit(msg)
+    sys.exit("cf-remote: " + msg)
+
+
+def mkdir(path):
+    if not os.path.exists(path):
+        log.info("Creating directory: {}".format(path))
+        os.mkdir(path)
+    else:
+        log.debug("Directory already exists: {}".format(path))
+
+
+def ls(path):
+    return os.listdir(path)
+
+
+def read_file(path):
+    try:
+        with open(path, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return None
+
+
+def save_file(path, data):
+    with open(path, "w") as f:
+        f.write(data)
+
+
+def read_json(path):
+    data = read_file(path)
+    if data:
+        data = json.loads(data, object_pairs_hook=OrderedDict)
+    return data
+
+
+def pretty(data):
+    return json.dumps(data, indent=2)
 
 
 def package_path():
@@ -61,3 +97,19 @@ def column_print(data):
 
 def pretty(data):
     return json.dumps(data, indent=2)
+
+
+def find_packages(path, extension=None, arch=None, os=None, hub=False):
+    packages = ls(path)
+    if extension:
+        packages = filter(lambda p: p.endswith(extension), packages)
+    if arch:
+        if arch == "32":
+            packages = filter(lambda p: "64" not in p, packages)
+        else:
+            packages = filter(lambda p: arch in p, packages)
+    if hub:
+        packages = filter(lambda p: "hub" in p, packages)
+    else:
+        packages = filter(lambda p: "hub" not in p, packages)
+    return list(packages)

@@ -14,6 +14,12 @@ def get_args():
     ap.add_argument(
         "--hosts", "-H", help="What hosts to connect to (ssh)", type=str)
     ap.add_argument(
+        "--directory",
+        "-d",
+        help="Local directory for packages",
+        type=str,
+        default=package_path() + "/packages")
+    ap.add_argument(
         "--log-level",
         "-l",
         help="Specify detail of logging",
@@ -32,12 +38,12 @@ def get_args():
     return args
 
 
-def run(command, hosts):
-    commands = {"info": remote.info}
+def run(command, hosts, users=None, config=None):
+    commands = {"info": remote.info, "install": remote.install}
     if command not in commands:
-        raise NotImplemented
+        user_error("Command '{}' does not exist".format(command))
     command = commands[command]
-    command(hosts)
+    command(hosts, users, config)
 
 
 def main():
@@ -48,7 +54,9 @@ def main():
         args.hosts = read_json(package_path() + "/hosts.json")
     if not args.hosts:
         user_error("Use -H or hosts.json to specify remote hosts")
-    run(args.command, args.hosts)
+    config = {}
+    config["directory"] = args.directory
+    run(args.command, hosts=args.hosts, config=config)
 
 
 if __name__ == "__main__":
