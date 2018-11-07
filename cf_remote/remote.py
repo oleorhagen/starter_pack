@@ -116,12 +116,6 @@ def get_info(host, users=None):
     return data
 
 
-def info(hosts, users=None, config=None):
-    for host in hosts:
-        data = get_info(host, users)
-        print_info(data)
-
-
 def scp(file, remote, c=None):
     if not c:
         c = connect(remote)
@@ -137,7 +131,9 @@ def install_package(host, pkg, data):
         ssh_sudo(c, "rpm -i {}".format(pkg))
 
 
-def install_host(host, users=None, config=None, hub=False, directory="./tmp"):
+def install_host(host, config=None, hub=False, directory=None):
+    if not directory:
+        directory = "./tmp"
     data = get_info(host)
     print_info(data)
     mkdir(directory)
@@ -149,8 +145,8 @@ def install_host(host, users=None, config=None, hub=False, directory="./tmp"):
         extension = ".rpm"
     else:
         raise ValueError
-    local_packages = find_packages(
-        directory, extension=extension, arch=arch, hub=hub)
+
+    local_packages = find_packages(directory, extension=extension, arch=arch, hub=hub)
     assert (len(local_packages) > 0)
     pkg = local_packages[0]
     host = data["ssh"]
@@ -159,20 +155,7 @@ def install_host(host, users=None, config=None, hub=False, directory="./tmp"):
     install_package(host, pkg, data)
     data = get_info(host)
     if data["agent_version"] and len(data["agent_version"]) > 0:
-        print(
-            "CFEngine {} was successfully installed on {}".format(
-                data["agent_version"], host))
+        print("CFEngine {} was successfully installed on {}".format(data["agent_version"], host))
     else:
         print("Installation failed!")
         sys.exit(1)
-
-
-def install(hosts, users=None, config=None, hub=False):
-    directory = None
-    if config and "directory" in config:
-        directory = config["directory"]
-    for host in hosts:
-        if directory:
-            install_host(host, users, config, hub, directory)
-        else:
-            install_host(host, users, config, hub)
